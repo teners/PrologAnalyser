@@ -3,8 +3,10 @@ Coursework project for analysis (scanning and parsing in general) some Prolog la
 
 ## Build
 Execute in shell:
-`> make`
+
+`$ make`
 
 ## Usage
 Simply run it like this:
-`> ./apl /path/to/file.pl`
+
+`$ ./apl /path/to/file.pl`
