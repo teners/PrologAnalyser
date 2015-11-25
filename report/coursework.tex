@@ -1,0 +1,54 @@
+\documentclass[a4paper,12pt]{article} %размер бумаги устанавливаем А4, шрифт 12пунктов
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}	%кодировка
+\usepackage[english,russian]{babel}%используем русский и английский языки с переносами
+
+\usepackage{geometry} % Меняем поля страницы
+\geometry{left=2.5cm}% левое поле
+\geometry{right=1.5cm}% правое поле
+\geometry{top=1cm}% верхнее поле
+\geometry{bottom=2cm}% нижнее поле
+
+
+\begin{document}
+
+\begin{titlepage}
+
+\begin{center}
+	Министерство образования и науки Российской Федерации 
+
+    Федеральное государственное автономное образовательное 
+    учреждения высшего образования
+    «Санкт-Петербургский государственный университет аэрокосмического приборостроения»
+
+    \vspace{1cm}
+	Кафедра №43
+\end{center} 
+
+\begin{flushleft}
+    \vspace{2cm}
+	КУРСОВАЯ РАБОТА\newline
+	ЗАЩИЩЕНА С ОЦЕНКОЙ\newline
+	РУКОВОДИТЕЛЬ\newline
+\end{flushleft}
+
+\begin{tabular}{p{4.5cm} p{0.5cm} p{4cm} p{0.5cm} p{4cm}}
+    \centering доц., к.т.н., доц. & & & & {\hspace{0.3cm} Максимова Т.~М.} \\ \cline{1-1} \cline{3-3} \cline{5-5}  
+    \centering \tiny{должность, уч. степень, звание} & & 
+    \centering \tiny{подпись, дата} & & 
+    \centering \tiny{инициалы, фамилия}
+\end{tabular}
+
+
+\vspace{\fill}
+\begin{center}
+Санкт-Петербург \\2015
+\end{center}
+
+\end{titlepage}
+
+\newpage
+
+\tableofcontents % это оглавление, которое генерируется автоматически
+
+\end{document}
