@@ -1,12 +1,10 @@
-# Prolog Analysis
+# Prolog Analyser
 Coursework project for analysis (scanning and parsing in general) some Prolog language subset
 
 ## Build
-Execute in shell:
-
-`$ make`
+Just `$ make` it in shell as usual.
 
 ## Usage
-Simply run it like this:
+Execute in shell: 
 
-`$ ./apl /path/to/file.pl`
+```$ ./apl /path/to/file.pl```
