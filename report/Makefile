@@ -1,5 +1,5 @@
 .SILENT : out
 
 out: coursework.tex
-	pdflatex coursework.tex > .logfile && \
-	rm *.log *.toc *.aux
+	texi2pdf coursework.tex > .logfile && \
+	rm *.log *.toc *.aux *.out
