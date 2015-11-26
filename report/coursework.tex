@@ -1,22 +1,22 @@
 %\NeedsTeXFormat{LaTeX2e}
 \documentclass[a4paper,12pt]{article} 
 
+\usepackage{lipsum}
+\usepackage{fancyhdr}
+%% set indent at the beginning of a paragraph
+\usepackage{indentfirst} 
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}	
 \usepackage[russian]{babel}
-\usepackage{fancyhdr}
 \usepackage[a4paper]{geometry} 
-%% set indent at the beginning of a paragraph
-\usepackage{indentfirst} 
 \usepackage[titletoc]{appendix}
 %% set urls' colors 
 \usepackage[colorlinks=true,urlcolor=black,linkcolor=black,filecolor=black,citecolor=black]{hyperref}
-\usepackage{lipsum}
 
-\geometry{left=4cm}
-\geometry{right=1.5cm}
 \geometry{top=3cm}
+\geometry{left=4cm}
 \geometry{bottom=3cm}
+\geometry{right=1.5cm}
 
 %% macro starts new section on new page
 \newcommand{\psection}[1]{\newpage\section{#1}}
@@ -70,8 +70,8 @@
         \end{flushleft}
 
         \setlength{\tabcolsep}{0.8cm}
-        {\raggedright\begin{tabular*}{450pt}{@{\extracolsep{\fill}} l c c r c c}
-                СТУДЕНТ ГР. & 4331 & & \date{\today}        & & Соколов С.~А. \\ \cline{2-2} \cline{4-4} \cline{6-6}
+        {\raggedright\begin{tabular*}{450pt}{@{\extracolsep{\fill}} l c c c c c}
+                СТУДЕНТ ГР. & 4331 & &                      & & Соколов С.~А. \\ \cline{2-2} \cline{4-4} \cline{6-6}
                             &      & & \tiny{подпись, дата} & & \tiny{фамилия, инициалы}
         \end{tabular*}}
 
@@ -79,8 +79,10 @@
 
     \tableofcontents 
 
+%% content
+
     \unsection*{Введение}
-    %% Lorem Ipsum
+    %% lorem ipsum, replace with your own text
     \lipsum[3-6]    
 
     \psection{Постановка задачи}
