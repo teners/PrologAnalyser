@@ -13,6 +13,22 @@
 %% set urls' colors 
 \usepackage[colorlinks=true,urlcolor=black,linkcolor=black,filecolor=black,citecolor=black]{hyperref}
 
+
+%% title page settings
+%% just put your values in these 'variables'
+%% --------------------------------------------------------    
+\newcommand{\chair}         {№43}
+\newcommand{\degree}        {доцент, к.т.н.}
+\newcommand{\professorname} {Максимова Т.~М.}
+\newcommand{\reporttype}    {Пояснительная записка к}
+\newcommand{\worktype}      {курсовой работе}
+\newcommand{\worktitle}     {Синтаксически управляемый анализ анализ\\ семантики идентификаторов в текстах программ}
+\newcommand{\subject}       {теория языков программирования\\ и методы трансляции}  
+\newcommand{\group}         {4331}
+\newcommand{\studentname}   {Соколов С.~А.}
+%% --------------------------------------------------------    
+
+
 \geometry{top=3cm}
 \geometry{left=4cm}
 \geometry{bottom=3cm}
@@ -36,14 +52,14 @@
         Федеральное государственное автономное образовательное учреждения высшего образования
         <<Санкт-Петербургский государственный университет аэрокосмического приборостроения>>}
         \vskip 1em
-        {\large Кафедра №43\\}}
+        {\large Кафедра \chair\\}}
         
         %% footer
         \cfoot{\large Санкт-Петербург\\ \the\year} 
 
 
         \begin{flushleft}
-            КУРСОВАЯ РАБОТА\\
+            РАБОТА\\
             ЗАЩИЩЕНА С ОЦЕНКОЙ\\
             \vskip 1em
             РУКОВОДИТЕЛЬ\\
@@ -52,16 +68,16 @@
         \vskip 1em 
         \setlength{\tabcolsep}{0.8cm}
         {\raggedright\begin{tabular}{c c c c c}
-            доцент, к.т.н.                          & &                      & & Максимова Т.~М. \\ \cline{1-1} \cline{3-3} \cline{5-5}  
+            \degree                               & &                      & & \professorname \\ \cline{1-1} \cline{3-3} \cline{5-5}  
             \tiny{должность, уч. степень, звание} & & \tiny{подпись, дата} & & \tiny{инициалы, фамилия} 
         \end{tabular}} 
 
         \begin{center} \large 
             \vskip 0.15\textheight
-            Пояснительная записка к курсовой работе\\
+            \reporttype~\worktype\\
             \vskip 1em
-            {\sc Синтаксически управляемый анализ анализ\\ семантики идентификаторов в текстах программ}\\
-            по дисциплине: теория языков программирования\\ и методы трансляции
+            {\sc \worktitle}\\
+            по дисциплине:~\subject
         \end{center}
 
         \begin{flushleft}
@@ -71,8 +87,8 @@
 
         \setlength{\tabcolsep}{0.8cm}
         {\raggedright\begin{tabular*}{450pt}{@{\extracolsep{\fill}} l c c c c c}
-                СТУДЕНТ ГР. & 4331 & &                      & & Соколов С.~А. \\ \cline{2-2} \cline{4-4} \cline{6-6}
-                            &      & & \tiny{подпись, дата} & & \tiny{фамилия, инициалы}
+                СТУДЕНТ ГР. & \group & &                      & & \studentname \\ \cline{2-2} \cline{4-4} \cline{6-6}
+                            &        & & \tiny{подпись, дата} & & \tiny{фамилия, инициалы}
         \end{tabular*}}
 
     \end{titlepage}
@@ -80,7 +96,7 @@
     \tableofcontents 
 
 %% content
-
+%% --------------------------------------------------------
     \unsection*{Введение}
     %% lorem ipsum, replace with your own text
     \lipsum[3-6]    
@@ -90,4 +106,5 @@
     
     \psection{Описание исходного языка}
     \lipsum[10-14]
+%% --------------------------------------------------------    
 \end{document}
