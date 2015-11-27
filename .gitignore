@@ -1,2 +1,6 @@
 *.pdf 
 .logfile
+*.tab*
+*.pl
+*.yy*
+*.out

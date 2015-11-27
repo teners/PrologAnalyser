@@ -10,14 +10,12 @@ void yyerror(char * start, ...)
     fprintf(stderr, " on %d line\n", yylineno);
 }
 
-struct List * add_identifier(struct List * list, char * name)
+struct List * add_identifier(struct List * list, char * name, int args)
 {
     struct List * ptr = malloc(sizeof(struct List));
     ptr->name = name;
-    ptr->state = 0;
-    ptr->line = yylineno;
     ptr->next = 0;
-    ptr->def_count = 0;
+    ptr->args_count = args;
     if (!list)
     {
         return ptr;
@@ -62,17 +60,6 @@ struct List * delete_table(struct List * list)
     }
     
     return list;
-}
-
-char * take_name(char * identifier)
-{
-    int length = strcspn(identifier, "(.:)");
-    char * name = malloc(sizeof(char) * (length + 1));
-
-    strncpy(name, identifier, length);
-    name[length] = '\0';
-    
-    return name;
 }
 
 int main(int argc, char ** argv)
