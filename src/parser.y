@@ -38,7 +38,7 @@ PREDICATES: PREDICATES PREDICATE { $$ = $1 + $2; }
 
 PREDICATE: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DOT 
          { 
-            struct List * id = check_identifier(table, $1);
+            struct List * id = check_identifier(table, identifier_parse($1));
             if (id)
             {
                 $$ = -100;
@@ -47,13 +47,13 @@ PREDICATE: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DOT
             else
             {
                 $$ = 1;
-                table = add_identifier(table, $1, $3);
+                table = add_identifier(table, identifier_parse($1), $3);
             }   
                    
          }
          | IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DEFINE STATEMENTS DOT 
          { 
-            struct List * id = check_identifier(table, $1);
+            struct List * id = check_identifier(table, identifier_parse($1));
             if (id)
             {
                 $$ = -100;
@@ -68,13 +68,13 @@ PREDICATE: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DOT
                 else
                 {
                     $$ = 1;
-                    table = add_identifier(table, $1, $3);
+                    table = add_identifier(table, identifier_parse($1), $3);
                 }
             }
          }
          | IDENTIFIER OPEN_PAR CLOSE_PAR DOT 
          {
-            struct List * id = check_identifier(table, $1);
+            struct List * id = check_identifier(table, identifier_parse($1));
             if (id)
             {
                 $$ = -100;
@@ -83,12 +83,12 @@ PREDICATE: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DOT
             else
             {
                 $$ = 1;
-                table = add_identifier(table, $1, 0);
+                table = add_identifier(table, identifier_parse($1), 0);
             }
          }
          | IDENTIFIER OPEN_PAR CLOSE_PAR DEFINE STATEMENTS DOT
          {
-            struct List * id = check_identifier(table, $1);
+            struct List * id = check_identifier(table, identifier_parse($1));
             if (id)
             {
                 $$ = -100;
@@ -103,7 +103,7 @@ PREDICATE: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DOT
                 else
                 {
                     $$ = 1;
-                    table = add_identifier(table, $1, 0);
+                    table = add_identifier(table, identifier_parse($1), 0);
                 }
             }
          }
@@ -139,7 +139,7 @@ STATEMENTS: STATEMENTS COMMA STATEMENT { $$ = $1 + $3; }
 
 STATEMENT: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR 
          {
-            struct List * id = check_identifier(table, $1);
+            struct List * id = check_identifier(table, identifier_parse($1));
             if (!id)
             {
                 $$ = -1000;

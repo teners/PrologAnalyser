@@ -30,7 +30,6 @@ struct List * add_identifier(struct List * list, char * name, int args)
         }
 
         iterator->next = ptr;
-
         return list;
     }
 }
@@ -60,6 +59,14 @@ struct List * delete_table(struct List * list)
     }
     
     return list;
+}
+
+char *identifier_parse(char *str) {
+	int n = strcspn(str, " ,()");
+	char *name = malloc((n+1)*sizeof(char));
+   	strncpy(name, str, n);
+	name[n] = '\0';
+	return name;
 }
 
 int main(int argc, char ** argv)
