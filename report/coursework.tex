@@ -11,8 +11,9 @@
 \usepackage[a4paper]{geometry} 
 \usepackage[titletoc]{appendix}
 %% set urls' colors 
+\usepackage{enumitem}
+\usepackage{listings}
 \usepackage[colorlinks=true,urlcolor=black,linkcolor=black,filecolor=black,citecolor=black]{hyperref}
-
 
 %% title page settings
 %% just put your values in these 'variables'
@@ -37,7 +38,7 @@
 %% macro starts new section on new page
 \newcommand{\psection}[1]{\newpage\section{#1}}
 %% this one does the same but for unenumerate sections
-\newcommand{\unsection}[2]{\newpage\section*{#2}\addcontentsline{toc}{section}{#2}}
+\newcommand{\unsection}[1]{\newpage\section*{#1}\addcontentsline{toc}{section}{#1}}
 
 \begin{document}
     \begin{titlepage}
@@ -97,14 +98,355 @@
 
 %% content
 %% --------------------------------------------------------
-    \unsection*{Введение}
-    %% lorem ipsum, replace with your own text
-    \lipsum[3-6]    
+    \unsection{Введение}
+    %\addcontentsline{toc}{section}{Введение}
+   
+    Синтаксический и семантический анализ являются очень важными этапами процесса компиляции.
+	Синтаксический анализ рассматривает цепочку лексем и проверяет, удовлетворяет ли она
+	структурным условиям сформулированным в описании грамматики языка.
+	Семантический анализ определяет смысл базовых конструцкий языка. Данный процесс синтаксически управляем,
+	т.е. когда синтаксический анализатор распознает определенную конструкцию языка, для нее вызывается соответствующее
+	семантическое правило. Также стоит отметить, что во время этого процесса строится абстрактное синтаксическое дерево разбора,
+	по которому в последствии получается промежуточный код, который будет требоваться на последующий стадиях компиляции.\\
+	\indent Согласно варианту, анализируемый язык программирования -- подмножество GNU Prolog.\\
+    \indent Prolog — язык и система логического программирования, основанные на языке предикатов математической 
+    логики дизъюнктов Хорна, представляющей собой подмножество логики предикатов первого порядка.
+    Язык сосредоточен вокруг небольшого набора основных механизмов, включая сопоставление с образцом, древовидного 
+    представления структур данных и автоматического перебора с возвратами. Хорошо подходит для решения задач, где 
+    рассматриваются объекты (в частности структурированные объекты) и отношения между ними. Пролог, благодаря своим 
+    особенностям, используется в области искусственного интеллекта, компьютерной лингвистики и нечислового 
+    программирования в целом.
 
     \psection{Постановка задачи}
-    \lipsum[7-8]
+    \label{sec:task} 
+    Задачей является разработка синтаксического и семантического анализатора подмножества Prolog. Синтаксический
+    анализ должен осуществляться с помощью конечного детерминированного автомата с магазинной памятью. Семантический
+    анализ должен быть основан на грамматике свойств.\\
+    Рассматриваемое подмножество языка:
+    \begin{itemize}[leftmargin=*] \itemsep1pt
+        \item[---] программа должна состоять из списка правил и списка целей;
+        \item[---] цель всегда начинается с ключевого слова <<:-init>>, в круглых скобках указывается цель и её аргументы;
+        \item[---] правила должны начинаться со строчной буквы, состоять из списка условий, разделённых символом <<запятая>> 
+            и оканчиваться символом <<точка>>;
+        \item[---] могут быть использованы встроенные предикаты <<write>>, <<ln>>, <<succ>>, а так же, ключевое слово <<is>>;
+        \item[---] переменные должны начинаться с заглавной буквы;
+        \item[---] в список аргументов правила или цели могут входить не только переменные, но и целые числа, строки, списки.
+    \end{itemize}
+    Анализируемые семантические ошибки:
+    \begin{itemize}[leftmargin=*] \itemsep1pt
+        \item[---] использование необъявленного правила;
+        \item[---] неверное количество аргументов в правиле.
+    \end{itemize}
+
+    \psection{Регулярная грамматика исходного языка}
+    \noindent
+    $\varepsilon$ -- пустая строка\\ \\
+    {\bf program}: predicates goals\\
+    {\bf predicates}: $\varepsilon$ | predicates predicate | predicate\\
+    {\bf prediate}: identifier open\_par close\_par dot | identifier open\_par close\_par define statements dot | 
+        identifier open\_par arguments close\_par dot | identifier open\_par arguments close\_par define statements dot\\
+    {\bf arguments}: argument | arguments comma argument\\
+    {\bf argument}: variable | number | string | list\\
+    {\bf list}: open\_brc close\_brc | open\_brc sequence close\_brc\\
+    {\bf sequence}: term | sequence comma term\\
+    {\bf term}: variable | number | string | list\\
+    {\bf statements}: statement | statements comma statement\\
+    {\bf statement}: cut | line | write open\_par sequence close\_par | succ open\_par variable comma variable close\_par |
+        identifier open\_par arguments close\_par\\
+    {\bf goals}: $\varepsilon$ | goal | goals goal\\
+    {\bf goal}: init open\_par statement close\_par dot
+    \vskip 6em
+    \section{Детерминированная автоматная модель синтаксического анализатора}
+    Для выполнения поставленной задачи был выбран LR(1)-анализатор.
+	Для данного анализатора строится конечный детерминированный автомат с магазинной памятью.
+	L обозначает то, что он читает входящий поток слева направо.
+	R указывает на то, что разбор будет происходить в обратном порядке, т.е. снизу вверх.
+	Индекс показывает то, что анализатор при принятии решений будет видеть следующую лексему.
+	Было принято решение реализовывать автомат посредством утилит Flex и Bison.
     
-    \psection{Описание исходного языка}
-    \lipsum[10-14]
+    \psection{Грамматика свойств}
+    \noindent
+    Свойства:\\
+    0 --- нейтральное\\
+    1 --- объявление правила\\
+    2 --- использование правила\\
+    3 --- использование необъявленного предиката \\ \\
+    {\bf program}: predicates goals\\
+	\begin{tabular}{c c | c}
+		\multicolumn{2}{c |}{S} & $\mu$ \\ 
+		\hline
+		 0 & 0 & 0 \\
+		 0 & 2 & 2 \\
+		 1 & 0 & 0 \\
+		 1 & 2 & 2 \\
+		 2 & 0 & 0 \\
+		 2 & 2 & 2 \\
+		 3 & 0 & 3 \\
+		 0 & 3 & 3 \\
+		 3 & 3 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf predicates}: $\varepsilon$\\
+ 	\begin{tabular}{c | c}
+		\multicolumn{1}{c |}{S} & $\mu$ \\ 
+		\hline
+		 0 & 0 \\ 
+	\end{tabular} 
+
+    \noindent
+    {\bf predicates}: predicate\\
+ 	\begin{tabular}{c | c}
+		\multicolumn{1}{c |}{S} & $\mu$ \\ 
+		\hline
+		 1 & 1 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf predicates}: predicates predicate\\
+	\begin{tabular}{c c | c}
+		\multicolumn{2}{c |}{S} & $\mu$ \\ 
+		\hline
+		 1 & 1 & 1 \\
+		 1 & 2 & 2 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf prediate}: identifier open\_par close\_par dot\\
+	\begin{tabular}{c c c c | c}
+		\multicolumn{4}{c |}{S} & $\mu$ \\ 
+		\hline
+        0 & 0 & 0 & 0 & 1 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf prediate}: identifier open\_par close\_par define statements dot\\
+	\begin{tabular}{c c c c c c | c}
+		\multicolumn{6}{c |}{S} & $\mu$ \\ 
+		\hline
+        0 & 0 & 0 & 0 & 2 & 0 & 2 \\
+        0 & 0 & 0 & 0 & 3 & 0 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf prediate}: identifier open\_par arguments close\_par dot\\
+ 	\begin{tabular}{c c c c c | c}
+		\multicolumn{5}{c |}{S} & $\mu$ \\ 
+		\hline
+        0 & 0 & 0 & 0 & 0 & 1 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf prediate}: identifier open\_par arguments close\_par define statements dot\\
+ 	\begin{tabular}{c c c c c c c | c}
+		\multicolumn{7}{c |}{S} & $\mu$ \\ 
+		\hline
+        0 & 0 & 0 & 0 & 0 & 2 & 0 & 2 \\
+        0 & 0 & 0 & 0 & 0 & 3 & 0 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf statements}: statement\\
+	\begin{tabular}{c | c}
+		\multicolumn{1}{c |}{S} & $\mu$ \\ 
+		\hline
+		 2 & 2 \\
+		 3 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf statements}: statements comma statement\\
+	\begin{tabular}{c c c | c}
+		\multicolumn{3}{c |}{S} & $\mu$ \\ 
+		\hline
+        2 & 0 & 2 & 2 \\
+        2 & 0 & 3 & 3 \\
+        3 & 0 & 2 & 3 \\
+        3 & 0 & 3 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf statement}: cut | line | write open\_par sequence close\_par | succ open\_par variable comma variable close\_par\\
+    % mu = 2
+    \begin{tabular}{c | c}
+        S & $\mu$ \\
+        \hline
+        $\cdots$ & 2 \\
+    \end{tabular} 
+
+    \noindent
+    {\bf statement}: identifier open\_par arguments close\_par\\
+    \begin{tabular}{c c c c | c}
+        \multicolumn{4}{c |}{S} & $\mu$ \\
+        \hline
+        0 & 0 & 0 & 0 & 2 \\
+        0 & 0 & 3 & 0 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf goals}: goal\\
+	\begin{tabular}{c | c}
+		\multicolumn{1}{c |}{S} & $\mu$ \\ 
+		\hline
+        0 & 0 \\
+		2 & 2 \\
+		3 & 3 \\
+	\end{tabular} 
+    
+    \noindent
+    {\bf goals}: goals goal\\
+	\begin{tabular}{c c | c}
+		\multicolumn{2}{c |}{S} & $\mu$ \\ 
+		\hline
+		 0 & 0 & 0 \\
+		 0 & 2 & 2 \\
+		 0 & 3 & 3 \\
+		 2 & 0 & 2 \\
+		 2 & 2 & 2 \\
+		 2 & 3 & 3 \\
+		 3 & 0 & 3 \\
+		 3 & 2 & 3 \\
+		 3 & 3 & 3 \\
+	\end{tabular} 
+
+    \noindent
+    {\bf goal}: init open\_par statement close\_par dot\\
+    \begin{tabular}{c c c c c | c}
+		\multicolumn{5}{c |}{S} & $\mu$ \\ 
+		\hline
+        0 & 0 & 2 & 0 & 0 & 2 \\
+        0 & 0 & 3 & 0 & 0 & 3 \\
+	\end{tabular} \\
+
+    \noindent
+    {\bf arguments}: argument\\
+    {\bf arguments}: arguments comma argument\\
+    {\bf argument}: variable | number | string | list\\
+    {\bf list}: open\_brc close\_brc | open\_brc sequence close\_brc\\
+    {\bf sequence}: term | sequence comma term\\
+    {\bf term}: variable | number | string | list\\
+    {\bf goals}: $\varepsilon$ \\
+     \begin{tabular}{c | c}
+        S & $\mu$ \\
+        \hline
+        $\cdots$ & 0 \\
+    \end{tabular}    
+ 
+    \psection{Структура разработанной программы}
+    \noindent
+    Разработанная программа состоит из следующих файлов:
+    \begin{itemize}[leftmargin=*] \itemsep1pt
+        \item[---] \verb|scanner.l| -- определения токенов и лексем для генератора GNU flex;
+        \item[---] \verb|parser.y| -- описание грамматики свойств для программы GNU bison;
+        \item[---] \verb|struct.h| -- заголовочный файл языка С, содержащий объявления вспомогательных функций и структур;
+        \item[---] \verb|struct.c| -- файл языка С, содержащий определения вспомогательных функций и точку входа программы. 
+    \end{itemize}
+    Описание вспомогательных функций и структур:
+    \begin{itemize}[leftmargin=*] \itemsep1pt
+        \item[---] \verb|struct List| -- структура (список) для хранения идентификаторов и их свойств;
+        \item[---] \verb|void yyerror(char * start, ...)| -- вывод сообщений об ошибках;
+        \item[---] \verb|struct List * add_identifier(struct List * list, char * name, int args)| -- добавление идентификатора в список;
+        \item[---] \verb|struct List * check_identifier(struct List * list, char * name)|\\-- проверка наличия идентификатора в списке;
+        \item[---] \verb|struct List * delete_table(struct List * list)|\\-- освобождение выделенной под структуру памяти; 
+        \item[---] \verb|char *identifier_parse(char *str)|\\-- извлечение имени идентификатора из строки программы.
+    \end{itemize}
+
+    \psection{Результаты тестирования} {
+    \lstset{numberstyle=\footnotesize\ttfamily, numbers=left, 
+    frame=single, language=Prolog, breaklines=true, showstringspaces=false,basicstyle=\footnotesize\ttfamily}
+   
+    {\centering \bf Тест №1\\}
+    \noindent
+    Входной файл:
+    \lstinputlisting{../src/0.pl}
+    Вывод программы:\\
+    \verb|OK.|\\
+
+    {\centering \bf Тест №2\\}
+    \noindent
+    Входной файл:
+    \lstinputlisting{../src/1.pl}
+    Вывод программы:\\
+    \verb|error: using undefined predicate, line 6|\\
+    \verb|error: using undefined predicate, line 8|\\
+    \verb|Not OK.|\\
+
+    {\centering \bf Тест №3\\}
+    \noindent
+    Входной файл:
+    \lstinputlisting{../src/2.pl}
+    Вывод программы:\\
+    \verb|error: wrong arguments number, line 7|\\
+    \verb|error: using undefined predicate, line 10|\\
+    \verb|Not OK.|\\
+
+    {\centering \bf Тест №4\\}
+    \noindent
+    Входной файл:
+    \lstinputlisting{../src/3.pl}
+    Вывод программы:\\
+    \verb|error: syntax error, line 6|\\
+    \verb|Not OK.|\\
+
+    {\centering \bf Тест №5\\}
+    \noindent
+    Входной файл:
+    \lstinputlisting{../src/4.pl}
+    Вывод программы:\\
+    \verb|error: syntax error, line 10|\\
+    \verb|Not OK.|\\
+
+    }
+
+    \psection{Руководство пользователя}
+    Для составления корректных входных данных пользователю следует ознакомиться с разделом
+    №~\ref{sec:task} <<Постановка задачи>>, в которой в общих чертах описано допустимое подмножество
+    языка Prolog.\\
+    Запуск программы осуществляется посредством исполняемого файла <<./apl>>. Программа работает со
+    стандартным потоком ввода. Таким образом, существует два варианта использования программы:
+    построчный ввод входных данных в консоли или использование утилиты cat и перенаправления входного
+    файла в стандартный поток ввода.\\
+    Пример: \texttt{cat mytest.pl | ./apl}
+    В ходе работы программы пользователь может получать сообщения об ошибках с указанием номера строки,
+    а так же конечный вердикт: <<OK>>, если исходные данные корректны, <<Not OK>> -- в ином случае.\\
+    
+    \vskip 6em
+
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+    В ходе выполнения курсового проекта я закрепил полученные в течение курса ТЯПиМТ знания,
+    подробнее изучил процесс компиляции и интерпретации языка Prolog. Написанная программа выполняет
+    поставленную задачу корректно.\\ \\
+    К её достоинствам можно отнести:
+	\begin{itemize} [leftmargin=*] \itemsep1pt
+        \item[---] Грамматика составлена с учетом нюансов языка Prolog;
+        \item[---] Программа безошибочно отлавливает как синтаксические, так и семантические ошибки;
+        \item[---] Программа написана на С, что гарантирует ей корректное построение автоматов в пакетах Flex и Bison.
+	\end{itemize}
+	К недостаткам можно отнести:
+	\begin{itemize} [leftmargin=*] \itemsep1pt
+        \item[---] Допустимое подмножество покрывает лишь некоторые базовые конструкции языка Prolog, в силу того, что
+            большинство базовых операций реализованно встроенными предикатами и для них необходимы дополнительные
+            проверки;
+        \item[---] Нет возможности проверять переменные, использующиеся как аргументы, так как такая проверка может быть
+            произведена лишь во время интерпретации.
+	\end{itemize}
+
+    \unsection{Приложение}
+    \lstset{numberstyle=\footnotesize\ttfamily, numbers=left, 
+    frame=single, language=C, breaklines=true, showstringspaces=false,basicstyle=\footnotesize\ttfamily}
+    \noindent \texttt{Makefile:}    
+    \lstinputlisting{../Makefile}
+    \texttt{scanner.l:}
+    \lstinputlisting{../.src/scanner.l}
+    \newpage
+    \texttt{parser.y:}
+    \lstinputlisting{../.src/parser.y}
+    \newpage
+    \texttt{struct.h:}
+    \lstinputlisting{../.src/struct.h}
+    \texttt{struct.c:}
+    \lstinputlisting{../.src/struct.c}
+
 %% --------------------------------------------------------    
 \end{document}

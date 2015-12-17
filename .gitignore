@@ -4,3 +4,4 @@
 *.pl
 *.yy*
 *.out
+.src

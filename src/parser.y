@@ -31,7 +31,7 @@ PROGRAM: PREDICATES GOALS
 }
 ;
 
-PREDICATES: PREDICATES PREDICATE { $$ = $1 + $2; }
+PREDICATES: PREDICATES PREDICATE { $$ = $2; }
           | PREDICATE            { $$ = $1; }
           |                      { $$ = 0; }
 ;
@@ -39,72 +39,42 @@ PREDICATES: PREDICATES PREDICATE { $$ = $1 + $2; }
 PREDICATE: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DOT 
          { 
             struct List * id = check_identifier(table, identifier_parse($1));
-            if (id)
-            {
-                $$ = -100;
-                yyerror("%s", "Predicate redefenition.");
-            }
-            else
-            {
-                $$ = 1;
-                table = add_identifier(table, identifier_parse($1), $3);
-            }   
+            $$ = 1;
+            table = add_identifier(table, identifier_parse($1), $3);
                    
          }
          | IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR DEFINE STATEMENTS DOT 
          { 
             struct List * id = check_identifier(table, identifier_parse($1));
-            if (id)
+            if ($6 == 3)
             {
-                $$ = -100;
-                yyerror("%s", "Predicate redefinition.");
+                $$ = 3;
             }
             else
             {
-                if ($6 < 0)
-                {
-                    $$ = -100;
-                }
-                else
-                {
-                    $$ = 1;
-                    table = add_identifier(table, identifier_parse($1), $3);
-                }
+                $$ = 1;
+                table = add_identifier(table, identifier_parse($1), $3);
             }
+            
          }
          | IDENTIFIER OPEN_PAR CLOSE_PAR DOT 
          {
             struct List * id = check_identifier(table, identifier_parse($1));
-            if (id)
+            $$ = 1;
+            table = add_identifier(table, identifier_parse($1), 0);
+            
+         }
+         | IDENTIFIER OPEN_PAR CLOSE_PAR DEFINE STATEMENTS DOT
+         {
+            struct List * id = check_identifier(table, identifier_parse($1));
+            if ($5 == 3)
             {
-                $$ = -100;
-                yyerror("%s", "Predicate redefinition.");
+                $$ = 3;
             }
             else
             {
                 $$ = 1;
                 table = add_identifier(table, identifier_parse($1), 0);
-            }
-         }
-         | IDENTIFIER OPEN_PAR CLOSE_PAR DEFINE STATEMENTS DOT
-         {
-            struct List * id = check_identifier(table, identifier_parse($1));
-            if (id)
-            {
-                $$ = -100;
-                yyerror("%s", "Predicate redefinition.");
-            }
-            else
-            {
-                if ($5 < 0)
-                {
-                    $$ = -100;
-                }
-                else
-                {
-                    $$ = 1;
-                    table = add_identifier(table, identifier_parse($1), 0);
-                }
             }
          }
 ;
@@ -133,7 +103,7 @@ TERM: NUMBER   { $$ = 0; }
     | LIST     { $$ = 0; }
 ; 
 
-STATEMENTS: STATEMENTS COMMA STATEMENT { $$ = $1 + $3; }
+STATEMENTS: STATEMENTS COMMA STATEMENT { if ($$ != 3) $$ = $3; }
           | STATEMENT                  { $$ = $1; }
 ;
 
@@ -142,7 +112,7 @@ STATEMENT: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR
             struct List * id = check_identifier(table, identifier_parse($1));
             if (!id)
             {
-                $$ = -1000;
+                $$ = 3;
                 yyerror("%s", "Using undefined predicate.");
             }
             else
@@ -153,7 +123,7 @@ STATEMENT: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR
                 }
                 else
                 {
-                    $$ = -1000;
+                    $$ = 3;
                     yyerror("%s", "Wrong arguments number.");
                 }
             }
@@ -164,7 +134,7 @@ STATEMENT: IDENTIFIER OPEN_PAR ARGUMENTS CLOSE_PAR
          | SUCC OPEN_PAR VARIABLE COMMA VARIABLE CLOSE_PAR { $$ = 2; } 
 ;
 
-GOALS: GOALS GOAL { $$ = $1 + $2; }
+GOALS: GOALS GOAL { if ($$ != 3) $$ = $2; }
      | GOAL       { $$ = $1; }
      |            { $$ = 0; } 
 ;
